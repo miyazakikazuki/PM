@@ -1,18 +1,17 @@
-#ifndef MATERIAL_HPP
-#define MATERIAL_HPP
+#ifndef CAMERA_HPP
+#define CAMERA_HPP
 
 #define EIGEN_NO_DEBUG // �R�[�h����assert�𖳌����D
 #define EIGEN_DONT_PARALLELIZE // �����𖳌����D
 #define EIGEN_MPL2_ONLY // LGPL���C�Z���X�̃R�[�h���g���Ȃ��D
 #include <Eigen/Core>
 #include "Ray.hpp"
+#include "Plane.hpp"
 using namespace Eigen;
 
-struct Material {
+struct Camera {
 	static int count;
 	int index;//�}�e���A���ԍ�
-	int type;//�}�e���A���̎���
-	double t;
-	void calct(Ray r);
+	Plane eye, lens;
 };
-#endif MATERIAL_HPP
+#endif CAMERA_HPP

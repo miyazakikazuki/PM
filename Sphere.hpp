@@ -7,7 +7,7 @@ using namespace Eigen;
 struct Sphere : public Material {
 	Vector3d center;
 	double radius;
-	Sphere(Vector3d c, double r);
+	int type = 2;
 	void calct(Ray r);
 };
 #endif SPHERE_HPP
