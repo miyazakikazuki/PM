@@ -1,17 +1,17 @@
-#ifndef CAMERA_HPP
-#define CAMERA_HPP
+#ifndef LIGHT_HPP
+#define LIGHT_HPP
 
-#define EIGEN_NO_DEBUG // �R�[�h����assert�𖳌����D
-#define EIGEN_DONT_PARALLELIZE // �����𖳌����D
-#define EIGEN_MPL2_ONLY // LGPL���C�Z���X�̃R�[�h���g���Ȃ��D
+#define EIGEN_NO_DEBUG 
+#define EIGEN_DONT_PARALLELIZE 
+#define EIGEN_MPL2_ONLY 
 #include <Eigen/Core>
 #include "Ray.hpp"
-#include "Plane.hpp"
+#include "Material.hpp"
 using namespace Eigen;
 
-struct Light {
+struct Light{
 	static int count;
-	int index;//�}�e���A���ԍ�
-	Plane emit, proj;
+	int index;
+	Material emit, proj;
 };
-#endif CAMERA_HPP
+#endif LIGHT_HPP
