@@ -21,7 +21,7 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 			+ (rand(mt) - 0.5) * l.proj.area.y() * l.proj.binormal() - photon.pos).normalized();
 		do{
 			for (int j = 0; j < 2; j++) {
-				if ((1.0 / m[j].t(photon)) > (1.0 / t)) {
+				if (m[j].t(photon) > 0 && m[j].t(photon) < t) {
 					t = m[j].t(photon);
 					mattype = m[j].mattype;
 					matnum = j;
@@ -61,6 +61,8 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 			photon.dir = wo;
 
 			alpha = alpha / prr;
+
+			t = 10000;
 		} while (true);
 	}
 }

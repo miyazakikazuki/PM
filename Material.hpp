@@ -15,7 +15,7 @@ struct Material {
 	int mattype = 0;
 	int reftype = 0;
 	double t(Ray r);
-	MatrixXd grid = MatrixXd::Zero(100, 100);
+	MatrixXd grid = MatrixXd::Zero(500, 500);
 	//for plane
 	Vector3d normal;
 	Vector3d pos;

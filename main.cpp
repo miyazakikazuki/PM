@@ -27,11 +27,11 @@ int main() {
 	c.lens.area << 1.0, 1.0;
 	c.lens.mattype = 1;
 
-	l.emit.pos << 0.0, 10.0, 0.0;
+	l.emit.pos << 0.0, 10.0, 10.0;
 	l.emit.normal = -l.emit.pos.normalized();
 	l.emit.area << 0.1, 0.1;
 	l.emit.mattype = 1;
-	l.proj.pos << 0.0, 9.0, 0.0;
+	l.proj.pos << 0.0, 9.0, 9.0;
 	l.proj.normal << -l.proj.pos.normalized();
 	l.proj.area << 1.0, 1.0;
 	l.proj.mattype = 1;
@@ -48,8 +48,9 @@ int main() {
 
 	m[0] = u;
 	m[1] = f;
-	PhotonTracing(m, l, 500000);
+	PhotonTracing(m, l, 10000000);
 	f.grid = m[1].grid;
+	f.grid = f.grid / 4.0;
 	
 
 	double* data = new double[f.grid.cols() * f.grid.rows()];
