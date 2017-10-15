@@ -14,8 +14,10 @@ struct Material {
 	int index;
 	int mattype = 0;
 	int reftype = 0;
+	double n = 1.0; //reflectance
+	bool inmat = false; //flag for refractions in materials
 	double t(Ray r);
-	MatrixXd grid = MatrixXd::Zero(500, 500);
+	MatrixXd grid = MatrixXd::Zero(100, 100);
 	//for plane
 	Vector3d normal;
 	Vector3d pos;

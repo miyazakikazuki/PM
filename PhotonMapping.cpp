@@ -40,19 +40,48 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 				break;
 			case 2:
 				normal = (x - m[matnum].center).normalized();
+				if (m[matnum].inmat) normal = - normal;
 			default:
 				break;
 			}
 
-			wo << rand(mt), rand(mt), rand(mt);
-			if (wo.dot(normal) < 0 && m[matnum].reftype == 1) {
-				wo = - wo;
+			
+			if (m[matnum].reftype == 1) {//diffuse
+				wo << rand(mt), rand(mt), rand(mt);
+				if (wo.dot(normal) < 0) {
+					wo = -wo;
+				}
+			}
+			else if (photon.dir.dot(normal) < 0
+				&& m[matnum].reftype == 2) { //refraction
+				double a, b;
+				Vector3d tmp;
+				a = - sqrt(1 - (1 - pow(-photon.dir.dot(normal), 2))
+					/ pow(m[matnum].n, 2));
+				b = 1 / m[matnum].n;
+				tmp = a * normal + b * photon.dir;
+				if (m[matnum].inmat) {
+					if (tmp.dot(normal) > 0) {
+						wo << rand(mt), rand(mt), rand(mt);
+						if (wo.dot(normal) < 0) {
+							wo = -wo;
+						}
+					}
+					else {
+						wo = tmp;
+						m[matnum].inmat = false;
+					}
+				}
+				else {
+					wo = tmp;
+					m[matnum].inmat = true;
+				}
 			}
 			wo = wo.normalized();
 			double prr = 0.5;
 
 			if (rand(mt) > prr) {
-				if (mattype == 1) {
+				if (mattype == 1) {//Plane
 					PhotonMapping(m[matnum], x, alpha);
 				}
 				break;

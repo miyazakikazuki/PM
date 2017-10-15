@@ -29,8 +29,12 @@ double Material::t(Ray r) {
 		D = B * B - A * C;
 		if (D < 0) {
 			return -1.0;
-		}else {
+		}
+		else if (!this->inmat) {
 			return (- B - sqrt(D)) / A;
+		}
+		else {
+			return (-B + sqrt(D)) / A;
 		}
 	}else {
 		return 0.0;

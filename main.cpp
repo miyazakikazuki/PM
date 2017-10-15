@@ -43,12 +43,13 @@ int main() {
 	f.reftype = 1;
 	u.center << 0.0, 1.0, 0.0;
 	u.radius = 1.0;
-	u.reftype = 1;
+	u.reftype = 2;
 	u.mattype = 2;
+	u.n = 1.3;
 
 	m[0] = u;
 	m[1] = f;
-	PhotonTracing(m, l, 10000000);
+	PhotonTracing(m, l, 100000);
 	f.grid = m[1].grid;
 	f.grid = f.grid / 4.0;
 	
