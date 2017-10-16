@@ -5,7 +5,7 @@
 #include "PhotonMapping.hpp"
 using namespace Eigen;
 
-void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
+void PhotonTracing(Material (&m)[4], Light l, int sampleN) {
 	std::random_device rnd;
 	std::mt19937 mt(rnd());
 	std::uniform_real_distribution<double> rand(0.0, 1.0);
@@ -20,7 +20,7 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 		photon.dir = (l.proj.pos + (rand(mt) - 0.5) * l.proj.area.x() * l.proj.tangent()
 			+ (rand(mt) - 0.5) * l.proj.area.y() * l.proj.binormal() - photon.pos).normalized();
 		do{
-			for (int j = 0; j < 2; j++) {
+			for (int j = 0; j < 4; j++) {
 				if (m[j].t(photon) > 0 && m[j].t(photon) < t) {
 					t = m[j].t(photon);
 					mattype = m[j].mattype;
@@ -30,9 +30,19 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 			if (t <= 0.0 || t == 10000) {
 				break;
 			}
+			
 			x = photon.pos + photon.dir * t;
 			wi = - photon.dir;
 			
+			double prr = 0.5;
+
+			if (rand(mt) > prr) {
+				if (mattype == 1) {//Plane
+					PhotonMapping(m[matnum], x, alpha);
+				}
+				break;
+			}
+
 			switch (mattype)
 			{
 			case 1:
@@ -52,8 +62,7 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 					wo = -wo;
 				}
 			}
-			else if (photon.dir.dot(normal) < 0
-				&& m[matnum].reftype == 2) { //refraction
+			else if (m[matnum].reftype == 2) { //refraction
 				double a, b;
 				Vector3d tmp;
 				a = - sqrt(1 - (1 - pow(-photon.dir.dot(normal), 2))
@@ -75,17 +84,10 @@ void PhotonTracing(Material (&m)[2], Light l, int sampleN) {
 				else {
 					wo = tmp;
 					m[matnum].inmat = true;
-				}
+				}//end refraction
 			}
 			wo = wo.normalized();
-			double prr = 0.5;
-
-			if (rand(mt) > prr) {
-				if (mattype == 1) {//Plane
-					PhotonMapping(m[matnum], x, alpha);
-				}
-				break;
-			}
+			
 			photon.pos = x;
 			photon.dir = wo;
 
@@ -100,11 +102,11 @@ void PhotonMapping(Material &mat, Vector3d hit, double alpha) {
 	int n, m;
 	Vector3d u, v, x0;
 	double det;
-	u = mat.area.x() / mat.grid.rows() * mat.tangent();
-	v = mat.area.y() / mat.grid.cols() * mat.binormal();
+	u = mat.area.x() / mat.grid.cols() * mat.tangent();
+	v = -mat.area.y() / mat.grid.rows() * mat.binormal();
 	det = u.x() * v.z() - u.z() * v.x();
 	x0 = mat.pos - mat.area.x() / 2.0 * mat.tangent()
-				 - mat.area.y() / 2.0 * mat.binormal();
+				 + mat.area.y() / 2.0 * mat.binormal();
 	n = (v.z() * (hit.x() - x0.x()) - v.x() * (hit.z() - x0.z())) / det;
 	m = (-u.z() * (hit.x() - x0.x()) + u.x() * (hit.z() - x0.z())) / det;
 	mat.grid(n,m) = mat.grid(n,m) + alpha;

@@ -10,7 +10,7 @@
 #include "Light.hpp"
 using namespace Eigen;
 
-void PhotonTracing(Material (&m)[2], Light l, int sampleN);
+void PhotonTracing(Material (&m)[4], Light l, int sampleN);
 void PhotonMapping(Material &mat, Vector3d hit, double alpha);
 
 #endif PHOTONMAPPING_HPP
