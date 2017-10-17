@@ -11,11 +11,30 @@ double Material::t(Ray r) {
 		pos = r.pos + (this->pos - r.pos).dot(this->normal) / r.dir.dot(this->normal) * r.dir;
 		u = this->area.x() / 2.0 * this->tangent();
 		v = this->area.y() / 2.0 * this->binormal();
-		det = u.x() * v.z() - u.z() * v.x();
-		n = (v.z() * (pos.x() - this->pos.x())
-			- v.x() * (pos.z() - this->pos.z())) / det;
-		m = (-u.z() * (pos.x() - this->pos.x())
-			+ u.x() * (pos.z() - this->pos.z())) / det;
+		if (abs(this->normal.x()) == 1.0) {
+			det = u.y() * v.z() - u.z() * v.y();
+			n = (v.z() * (pos.y() - this->pos.y())
+				- v.y() * (pos.z() - this->pos.z())) / det;
+			m = (-u.z() * (pos.y() - this->pos.y())
+				+ u.y() * (pos.z() - this->pos.z())) / det;
+			
+		}
+		else if (abs(this->normal.y()) == 1.0) {
+			det = u.x() * v.z() - u.z() * v.x();
+			n = (v.z() * (pos.x() - this->pos.x())
+				- v.x() * (pos.z() - this->pos.z())) / det;
+			m = (-u.z() * (pos.x() - this->pos.x())
+				+ u.x() * (pos.z() - this->pos.z())) / det;
+		}
+		else {
+			det = u.x() * v.y() - u.y() * v.x();
+			n = (v.y() * (pos.x() - this->pos.x())
+				- v.x() * (pos.y() - this->pos.y())) / det;
+			m = (-u.y() * (pos.x() - this->pos.x())
+				+ u.x() * (pos.y() - this->pos.y())) / det;
+			
+		}
+		
 		if (abs(n) < 1.0 && abs(m) < 1.0) {
 			return (this->pos - r.pos).dot(this->normal) / r.dir.dot(this->normal);
 		}else {
@@ -50,6 +69,7 @@ Vector3d Material::tangent() {
 		result.y() = 0;
 		result.z() = this->normal.x() / sqrt(this->normal.x() * this->normal.x() + this->normal.z() * this->normal.z());
 	}
+	
 	return result.normalized();
 }
 Vector3d Material::binormal() {

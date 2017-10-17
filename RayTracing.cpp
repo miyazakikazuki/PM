@@ -101,10 +101,22 @@ double CalcRadiance(Material mat, Vector3d hit) {
 	double det;
 	u = mat.area.x() / mat.grid.cols() * mat.tangent();
 	v = -mat.area.y() / mat.grid.rows() * mat.binormal();
-	det = u.x() * v.z() - u.z() * v.x();
 	x0 = mat.pos - mat.area.x() / 2.0 * mat.tangent()
 		+ mat.area.y() / 2.0 * mat.binormal();
-	n = (v.z() * (hit.x() - x0.x()) - v.x() * (hit.z() - x0.z())) / det;
-	m = (-u.z() * (hit.x() - x0.x()) + u.x() * (hit.z() - x0.z())) / det;
+	if (abs(mat.normal.x()) == 1.0) {
+		det = u.y() * v.z() - u.z() * v.y();
+		n = (v.z() * (hit.y() - x0.y()) - v.y() * (hit.z() - x0.z())) / det;
+		m = (-u.z() * (hit.y() - x0.y()) + u.y() * (hit.z() - x0.z())) / det;
+	}
+	else if (abs(mat.normal.y()) == 1.0) {
+		det = u.x() * v.z() - u.z() * v.x();
+		n = (v.z() * (hit.x() - x0.x()) - v.x() * (hit.z() - x0.z())) / det;
+		m = (-u.z() * (hit.x() - x0.x()) + u.x() * (hit.z() - x0.z())) / det;
+	}
+	else {
+		det = u.x() * v.y() - u.y() * v.x();
+		n = (v.y() * (hit.x() - x0.x()) - v.x() * (hit.y() - x0.y())) / det;
+		m = (-u.y() * (hit.x() - x0.x()) + u.x() * (hit.y() - x0.y())) / det;
+	}
 	return mat.grid(n, m);
 }

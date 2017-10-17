@@ -91,7 +91,7 @@ void PhotonTracing(Material (&m)[4], Light l, int sampleN) {
 			photon.pos = x;
 			photon.dir = wo;
 
-			alpha = alpha / prr;
+			//alpha = alpha / prr;
 
 			t = 10000;
 		} while (true);
@@ -104,10 +104,23 @@ void PhotonMapping(Material &mat, Vector3d hit, double alpha) {
 	double det;
 	u = mat.area.x() / mat.grid.cols() * mat.tangent();
 	v = -mat.area.y() / mat.grid.rows() * mat.binormal();
-	det = u.x() * v.z() - u.z() * v.x();
 	x0 = mat.pos - mat.area.x() / 2.0 * mat.tangent()
-				 + mat.area.y() / 2.0 * mat.binormal();
-	n = (v.z() * (hit.x() - x0.x()) - v.x() * (hit.z() - x0.z())) / det;
-	m = (-u.z() * (hit.x() - x0.x()) + u.x() * (hit.z() - x0.z())) / det;
+		+ mat.area.y() / 2.0 * mat.binormal();
+	if (abs(mat.normal.x()) == 1.0) {
+		det = u.y() * v.z() - u.z() * v.y();
+		n = (v.z() * (hit.y() - x0.y()) - v.y() * (hit.z() - x0.z())) / det;
+		m = (-u.z() * (hit.y() - x0.y()) + u.y() * (hit.z() - x0.z())) / det;
+	}
+	else if (abs(mat.normal.y()) == 1.0) {
+		det = u.x() * v.z() - u.z() * v.x();
+		n = (v.z() * (hit.x() - x0.x()) - v.x() * (hit.z() - x0.z())) / det;
+		m = (-u.z() * (hit.x() - x0.x()) + u.x() * (hit.z() - x0.z())) / det;
+	}
+	else {
+		det = u.x() * v.y() - u.y() * v.x();
+		n = (v.y() * (hit.x() - x0.x()) - v.x() * (hit.y() - x0.y())) / det;
+		m = (-u.y() * (hit.x() - x0.x()) + u.x() * (hit.y() - x0.y())) / det;
+	}
+	
 	mat.grid(n,m) = mat.grid(n,m) + alpha;
 }
